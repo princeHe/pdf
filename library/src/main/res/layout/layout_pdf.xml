@@ -10,8 +10,12 @@
         android:layout_height="match_parent"/>
 
     <TextView
+        android:id="@+id/tv_position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="hahhha"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="16sp"
+        android:layout_margin="16dp"
+        tools:text="1/10"/>
 
 </RelativeLayout>
