@@ -50,6 +50,15 @@ dependencies {
 
 }
 
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+
+artifacts {
+    archives sourcesJar
+}
+
 group = "com.he.pdf"
 version = '0.0.0-SNAPSHOT'
 
