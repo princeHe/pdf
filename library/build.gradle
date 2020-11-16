@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven'
 }
 
 android {
@@ -47,4 +48,17 @@ dependencies {
 
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
+}
+
+group = "com.he.pdf"
+version = '0.0.0-SNAPSHOT'
+
+def repoUri = System.properties['user.home'] + File.separator + ".m2" + File.separator + 'repository'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(repoUri))
+        }
+    }
 }
