@@ -22,10 +22,12 @@ class PdfView @JvmOverloads constructor(
         LayoutInflater.from(context), this, true
     )
 
+    @SuppressLint("SetTextI18n")
     @Throws(IOException::class, FileNotFoundException::class)
     fun fromFile(file: File, displayQuality: DisplayQuality) {
         require(file.exists())
         val render = PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY))
+        binding.tvPosition.text = "1/${render.pageCount}"
         binding.viewPager.adapter = PdfPagerAdapter(render, displayQuality)
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             @SuppressLint("SetTextI18n")
