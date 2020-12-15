@@ -2,6 +2,7 @@ package com.he.pdf
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.util.AttributeSet
@@ -27,8 +28,20 @@ class PdfView @JvmOverloads constructor(
     fun fromFile(file: File, displayQuality: DisplayQuality) {
         require(file.exists())
         val render = PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY))
+        val bitmaps = mutableListOf<Bitmap>()
+        for (i in 0 until render.pageCount) {
+            val page = render.openPage(i)
+            val bitmap = Bitmap.createBitmap(
+                page.width * displayQuality.quality, page.height * displayQuality.quality,
+                Bitmap.Config.ARGB_8888
+            )
+            bitmaps.add(bitmap)
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            page.close()
+        }
+        render.close()
         binding.tvPosition.text = "1/${render.pageCount}"
-        binding.viewPager.adapter = PdfPagerAdapter(render, displayQuality)
+        binding.viewPager.adapter = PdfPagerAdapter(bitmaps)
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             @SuppressLint("SetTextI18n")
             override fun onPageSelected(position: Int) {
@@ -36,14 +49,6 @@ class PdfView @JvmOverloads constructor(
                 binding.tvPosition.text = "${position + 1}/${render.pageCount}"
             }
         })
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        (binding.viewPager.adapter as? PdfPagerAdapter)?.let {
-            it.currentPage?.close()
-            it.renderer.close()
-        }
     }
 
 }
